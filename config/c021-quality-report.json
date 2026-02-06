@@ -1,0 +1,86 @@
+{
+  "report_id": "c021_quality_report",
+  "schedule": "0 8 * * *",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "data_scope": {
+    "lookback_days": 90,
+    "static_days": [7, 14],
+    "cleanup_policy": "keep_3_months",
+    "storage_path": "./rawdata/c021-quality-data.json"
+  },
+  "sql": {
+    "stored_procedure": "sp_report_quality_c021",
+    "params": {
+      "from_date": "{{date-90}}",
+      "to_date": "{{date}}"
+    },
+    "mock_result": {
+      "kpi_table": [
+        { "metric": "Output", "value": 1200 },
+        { "metric": "Defect", "value": 12 }
+      ],
+      "trend_chart": [
+        { "date": "2026-02-01", "value": 1000 },
+        { "date": "2026-02-02", "value": 1050 }
+      ],
+      "secondary_table": [
+        { "metric": "OEE", "value": 0.87 },
+        { "metric": "Yield", "value": 0.93 }
+      ]
+    }
+  },
+  "excel": {
+    "template": "resource/C021_2026_QUALITY_50M_S20PA_M99_CAAAF_FAC_Quality Report.xlsb",
+    "dataset_map": [
+      {
+        "dataset": "kpi_table",
+        "sheet": "SUMMARY",
+        "start_cell": "A1",
+        "include_header": true
+      },
+      {
+        "dataset": "trend_chart",
+        "sheet": "DATA",
+        "start_cell": "A1",
+        "include_header": true
+      },
+      {
+        "dataset": "secondary_table",
+        "sheet": "SUMMARY",
+        "start_cell": "A12",
+        "include_header": true
+      }
+    ]
+  },
+  "render_blocks": [
+    {
+      "id": "kpi_table",
+      "sheet": "SUMMARY",
+      "range": "A1:F10",
+      "type": "table",
+      "render": "html",
+      "order": 1
+    },
+    {
+      "id": "trend_chart",
+      "sheet": "SUMMARY",
+      "range": "H1:O20",
+      "type": "chart",
+      "render": "image",
+      "order": 2
+    },
+    {
+      "id": "secondary_table",
+      "sheet": "SUMMARY",
+      "range": "A12:F18",
+      "type": "table",
+      "render": "html",
+      "order": 3
+    }
+  ],
+  "mail": {
+    "to": ["team@company.com"],
+    "subject": "C021 Quality Report",
+    "attach_excel": true
+  }
+}
