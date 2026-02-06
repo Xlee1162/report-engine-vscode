@@ -81,6 +81,86 @@
 -   Trả về dataset đã tính toán xong
 -   Không phụ thuộc sheet Excel
 
+Tham khảo thông tin cơ bản bên dưới.
+
+### 1.Tên database và schema
+
+Use generic names.
+
+-   Database: report_engine
+-   Schema: dbo
+    Do NOT hardcode report-specific names.
+
+---
+
+### 2.Lưu gì trong DB
+
+Store framework-level data only:
+
+2.1. ReportConfig
+
+-   Report metadata
+-   Schedule
+-   Data scope rules
+-   Render block definitions
+
+    2.2. ReportRunLog
+
+-   Each execution instance
+-   Start/end time
+-   Status
+-   Error message
+
+    2.3. RawdataCache
+
+-   Incremental rawdata storage
+-   Lookback-based retention
+-   Independent from Excel structure
+
+    2.4. Optional: SnapshotMeta
+
+-   Image metadata for rendered blocks (path, block_id)
+
+---
+
+### 3. Danh sách stored procedure cần tạo
+
+Create generic stored procedures only:
+
+3.1. sp_GetReportConfig(@report_code)
+
+-   Returns report config (schedule, scope, blocks)
+
+    3.2. sp_GetRawdataDelta(@report_code, @from_date, @to_date)
+
+-   Returns incremental rawdata
+
+    3.3. sp_MergeRawdataCache(@report_code, @dataset)
+
+-   Handles upsert + retention
+
+    3.4. sp_LogReportRun(@report_code, @status, @message)
+
+-   Audit trail
+
+    3.5. sp_GetDatasetForReport(@report_code, @run_date)
+
+-   Returns pre-aggregated datasets for rendering
+
+Rất quan trọng:
+KHÔNG tạo SP cho từng report
+Report-specific SP sẽ được thêm sau, ngoài framework
+
+---
+
+### 4. Có bảng hiện hữu nào cần tham chiếu
+
+No foreign keys to business tables.
+This DB is framework-isolated.
+
+Report-specific SQL may reference external business DBs,
+but framework tables must remain decoupled.
+
 ---
 
 ## 5. Render Block Contract
