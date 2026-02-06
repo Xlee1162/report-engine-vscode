@@ -1,0 +1,22 @@
+{
+  "kpi_table": [
+    {
+      "metric": "Output",
+      "value": 1200
+    },
+    {
+      "metric": "Defect",
+      "value": 12
+    }
+  ],
+  "trend_chart": [
+    {
+      "date": "2026-02-01",
+      "value": 1000
+    },
+    {
+      "date": "2026-02-02",
+      "value": 1050
+    }
+  ]
+}
